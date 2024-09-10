@@ -76,6 +76,8 @@ https://drive.google.com/file/d/1J8_WHY7Em-oXvDcBc2FFebXjaK8zzFdA/view?usp=drive
     ```bash
      ./mvnw clean package
      ./mvnw spring-boot:run
+  OR
+Go to `\src\main\java\com\ethereumTracker\EthereumDepositeTrackerApplication.java` and run the file directly from your IDE.
 
 
 ## Usage
