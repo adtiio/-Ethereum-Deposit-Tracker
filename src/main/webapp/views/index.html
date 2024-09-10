@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit Tracker</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        #depositsList {
+            width: 100%;
+        }
+        .btn-custom {
+            background-color: #343a40;
+            color: #ffffff;
+            border: none;
+        }
+        .btn-custom:hover {
+            background-color: #495057;
+        }
+        .btn-custom:focus, .btn-custom:active {
+            box-shadow: none;
+            outline: none;
+        }
+        .form-control {
+            border-radius: 4px;
+        }
+        .alert {
+            border-radius: 4px;
+        }
+        .transition {
+            transition: all 0.3s ease;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        table {
+            transition: all 0.3s ease;
+        }
+        table th, table td {
+            text-align: center;
+        }
+        table thead th {
+            background-color: #343a40;
+            color: #ffffff;
+        }
+        table tbody tr:nth-child(odd) {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4 text-center">Deposit Tracker</h1>
+
+        <!-- Track Deposit Form -->
+        <div class="mb-4">
+            <h2>Track a Deposit</h2>
+            <form id="trackForm" autocomplete="off">
+                <div class="form-group" id="temp">
+                    <label for="1">Transaction Hash</label>
+                    <input type="text" class="form-control transition" id="1" required>
+                </div>
+                <button type="submit" class="btn btn-custom transition">Track Deposit</button>
+                <button onclick="addelem(event)" class="btn btn-custom transition ml-2">New Transaction</button>
+                <button type="button" class="btn btn-secondary transition ml-2" id="startTracking">Start Real-Time Tracking</button>
+            </form>
+            <div id="trackResult" class="mt-3"></div>
+        </div>
+        <div>
+            <h2>All Deposits</h2>
+            <button class="btn btn-custom transition" id="getAllDeposits">Fetch All Deposits</button>
+            <div id="depositsList" class="mt-3"></div>
+        </div>
+    </div>
+
+    <script>
+        var curr = 2;
+        const forms = document.getElementById('temp');
+
+        function addelem(event) {
+            event.preventDefault();
+            
+            // Create a new input element
+            const newInput = document.createElement('input');
+            newInput.type = 'text';
+            newInput.className = 'form-control transition';
+            newInput.id = curr;
+            newInput.style.marginTop = '5px';
+            newInput.required = true;
+            
+            // Append the new input element to the form
+            forms.appendChild(newInput);
+
+            curr += 1;
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const trackForm = document.getElementById('trackForm');
+            const trackResult = document.getElementById('trackResult');
+            const getAllDeposits = document.getElementById('getAllDeposits');
+            const depositsList = document.getElementById('depositsList');
+            const startTracking = document.getElementById('startTracking');
+
+            // Track Deposit Submit Handler
+            trackForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                // Gather all transaction hashes
+                let txHash = "";
+                for (let i = 1; i < curr; i++) {
+                    if (i != 1) txHash += ",";
+                    txHash += document.getElementById(i).value;
+                }
+
+                // Reset form fields
+                forms.innerHTML = `<div class="form-group" id="temp">
+                    <label for="1">Transaction Hash</label>
+                    <input type="text" class="form-control transition" id="1" required>
+                </div>`;
+                curr = 2;
+
+                // Send the fetch request
+                fetch('http://localhost:8081/deposits/track/?txHash=' + encodeURIComponent(txHash))
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok ' + response.statusText);
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        trackResult.innerHTML = `<div class="alert alert-success transition">${data}</div>`;
+                    })
+                    .catch(error => {
+                        trackResult.innerHTML = `<div class="alert alert-danger transition">Error: ${error.message}</div>`;
+                    });
+            });
+
+            // Handle button click for fetching all deposits
+            getAllDeposits.addEventListener('click', function() {
+                fetch('http://localhost:8081/deposits/')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch deposits: ' + response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.length === 0) {
+                            depositsList.innerHTML = '<div class="alert alert-info transition">No deposits found.</div>';
+                        } else {
+                            let html = '<table class="table table-bordered transition"><thead><tr><th>Id</th><th>Block Number</th><th>Time Stamp</th><th>Fee</th><th>Hash</th></tr></thead><tbody>';
+                            data.forEach(deposit => {
+                                html += `<tr><td>${deposit.id}</td><td>${deposit.blockNumber}</td><td>${deposit.blockTimestamp}</td><td>${deposit.fee}</td><td>${deposit.hash}</td></tr>`;
+                            });
+                            html += '</tbody></table>';
+                            depositsList.innerHTML = html;
+                        }
+                    })
+                    .catch(error => {
+                        depositsList.innerHTML = `<div class="alert alert-danger transition">Error: ${error.message}</div>`;
+                    });
+            });
+
+            // Handle button click for starting real-time tracking
+            startTracking.addEventListener('click', function() {
+                fetch('http://localhost:8081/deposits/start-tracking')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to start tracking: ' + response.statusText);
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        trackResult.innerHTML = `<div class="alert alert-success transition">${data}</div>`;
+                    })
+                    .catch(error => {
+                        trackResult.innerHTML = `<div class="alert alert-danger transition">Error: ${error.message}</div>`;
+                    });
+            });
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
