@@ -56,6 +56,13 @@ https://drive.google.com/file/d/1J8_WHY7Em-oXvDcBc2FFebXjaK8zzFdA/view?usp=drive
   - `fee`: The fee associated with the deposit.
   - `hash`: The transaction hash of the deposit.
   - `pubkey`: The public key extracted from the deposit transaction data.
+ 
+
+## Prerequisites
+
+- **Java 17 or higher**
+- **Maven**
+
 
 ## Setup Instructions
 1. **Clone the Repository**
