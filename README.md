@@ -66,8 +66,8 @@ https://drive.google.com/file/d/1J8_WHY7Em-oXvDcBc2FFebXjaK8zzFdA/view?usp=drive
 ## Setup Instructions
 1. **Clone the Repository**
    ```bash
-   git clone <repository-url>
-   cd <project-directory>
+   git clone https://github.com/adtiio/-Ethereum-Deposit-Tracker.git
+   cd -Ethereum-Deposit-Tracker
 
 2. **Configure the Application**:
     Update application.properties and EthereumService(optional) with your MySQL database details and Alchemy secret key.
