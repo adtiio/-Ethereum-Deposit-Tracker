@@ -6,7 +6,6 @@ The Ethereum Deposit Tracker is a Spring Boot application designed to monitor an
 - **RPC Integration**: Establishing a connection to an Ethereum node (via Alchemy) and using Ethereum RPC methods to fetch deposit data.
 - **Deposit Tracking Logic**: Monitoring the Beacon Deposit Contract (address `0x00000000219ab540356cBB839Cbe05303d7705Fa`) for incoming ETH deposits and recording details such as amount, sender address, timestamp, and handling multiple deposits in a single transaction.
 - **Error Handling and Logging**: Implementing comprehensive error handling for API calls and RPC interactions, along with logging mechanisms to track errors and important events.
-- **Optional Features**: Integrating alerting mechanisms like Grafana dashboards and Telegram notifications to notify users of new deposits.
 
 
 ## Video Sample
