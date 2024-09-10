@@ -8,6 +8,11 @@ The Ethereum Deposit Tracker is a Spring Boot application designed to monitor an
 - **Error Handling and Logging**: Implementing comprehensive error handling for API calls and RPC interactions, along with logging mechanisms to track errors and important events.
 - **Optional Features**: Integrating alerting mechanisms like Grafana dashboards and Telegram notifications to notify users of new deposits.
 
+
+## Video Sample
+https://drive.google.com/file/d/1J8_WHY7Em-oXvDcBc2FFebXjaK8zzFdA/view?usp=drive_link
+
+
 ## Technologies Used
 - **Java**: Programming language
 - **Spring Boot**: Framework for creating the application
